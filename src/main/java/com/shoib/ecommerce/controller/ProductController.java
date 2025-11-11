@@ -1,5 +1,6 @@
 package com.shoib.ecommerce.controller;
 
+import com.shoib.ecommerce.dto.ProductResponseDto;
 import com.shoib.ecommerce.entity.Product;
 import com.shoib.ecommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -36,4 +37,13 @@ public class ProductController {
         return productService.searchProducts(keyword);
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable String id, @RequestBody Product product) {
+        return ResponseEntity.ok(productService.updateProduct(id, product));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Product> deleteProduct(@PathVariable String id) {
+        return ResponseEntity.ok(productService.deleteProduct(id));
+    }
 }
