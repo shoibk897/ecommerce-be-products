@@ -26,7 +26,7 @@ public class ProductController {
         return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping
+    @PostMapping("/addProduct")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         return ResponseEntity.ok(productService.create(product));
     }
