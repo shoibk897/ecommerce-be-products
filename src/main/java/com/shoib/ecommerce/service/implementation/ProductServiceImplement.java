@@ -19,7 +19,6 @@ import java.util.Random;
 public class ProductServiceImplement implements ProductService {
 
     private final ProductRepository productRepository;
-    private final ProductMapper mapper;
     private final Random random = new Random();
     private String generateProductId() {
         String id;
@@ -34,16 +33,16 @@ public class ProductServiceImplement implements ProductService {
     public List<ProductAdminDTO> getAllProductsForAdmin() {
         return productRepository.findAll()
                 .stream()
-                .map(mapper::toAdminDTO)
+                .map(ProductMapper::toAdminDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ProductAdminDTO create(ProductAdminDTO productAdmin) {
         productAdmin.setId(generateProductId());
-        Product product = mapper.toEntity(productAdmin);
+        Product product = ProductMapper.toEntity(productAdmin);
         Product saved =  productRepository.save(product);
-        return mapper.toAdminDTO(saved);
+        return ProductMapper.toAdminDTO(saved);
     }
 
     @Override
@@ -56,35 +55,35 @@ public class ProductServiceImplement implements ProductService {
         product.setType(updatedProduct.getType());
         product.setStock(updatedProduct.getStock());
         Product saved = productRepository.save(product);
-        return mapper.toAdminDTO(saved);
+        return ProductMapper.toAdminDTO(saved);
     }
 
     @Override
     public ProductAdminDTO deleteProduct(String id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         productRepository.delete(product);
-        return mapper.toAdminDTO(product);
+        return ProductMapper.toAdminDTO(product);
     }
 
     @Override
     public List<ProductUserDTO> getAllProductsForUser(){
         return productRepository.findAll()
                 .stream()
-                .map(mapper::toUserDTO)
+                .map(ProductMapper::toUserDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ProductUserDTO getById(String id){
         Product product = productRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return mapper.toUserDTO(product);
+        return ProductMapper.toUserDTO(product);
     }
 
     @Override
     public List<ProductUserDTO> searchProductsUser(String keyword){
         return productRepository.findByNameContainingIgnoreCase(keyword)
                 .stream()
-                .map(mapper::toUserDTO)
+                .map(ProductMapper::toUserDTO)
                 .collect(Collectors.toList());
     }
 
@@ -92,7 +91,7 @@ public class ProductServiceImplement implements ProductService {
     public List<ProductAdminDTO> searchProductsAdmin(String keyword) {
         return productRepository.findByNameContainingIgnoreCase(keyword)
                 .stream()
-                .map(mapper::toAdminDTO)
+                .map(ProductMapper::toAdminDTO)
                 .collect(Collectors.toList());
     }
 }
