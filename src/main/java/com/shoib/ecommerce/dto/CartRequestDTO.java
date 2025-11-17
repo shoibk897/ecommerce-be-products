@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartAddRequestDTO {
+public class CartRequestDTO {
     private String userId;
     private String productId;
     private int quantity;

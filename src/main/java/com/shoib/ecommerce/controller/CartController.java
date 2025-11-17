@@ -1,4 +1,42 @@
 package com.shoib.ecommerce.controller;
 
-public class CartController {
+import com.shoib.ecommerce.dto.CartDTO;
+import com.shoib.ecommerce.dto.CartRequestDTO;
+import com.shoib.ecommerce.service.CartService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/cart")
+@RequiredArgsConstructor
+public class  CartController {
+
+    private final CartService cartService;
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<CartDTO> getUserCart(@PathVariable String userId) {
+        return ResponseEntity.ok(cartService.getUserCart(userId));
+    }
+
+    @PostMapping("/addToCart")
+    public ResponseEntity<CartDTO> addToCart(@RequestBody CartRequestDTO request) {
+        return ResponseEntity.ok(cartService.addToCart( request));
+    }
+
+    @DeleteMapping("/remove/{userId}/{productId}")
+    public ResponseEntity<CartDTO> removeFromCart(@PathVariable String userId, @PathVariable String productId) {
+        return ResponseEntity.ok(cartService.removeFromCart(userId, productId));
+    }
+
+    @DeleteMapping("/removeQty")
+    public ResponseEntity<CartDTO> removeQtyFromCart(@RequestBody CartRequestDTO request) {
+        return ResponseEntity.ok(cartService.removeQtyFromCart(request));
+    }
+
+    @DeleteMapping("/clear/{userId}")
+    public ResponseEntity<String> clearCart(@PathVariable String userId) {
+        cartService.clearCart(userId);
+        return ResponseEntity.ok("Cart cleared");
+    }
 }
