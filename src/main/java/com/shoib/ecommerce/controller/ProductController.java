@@ -28,7 +28,13 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductUserDTO> getUserProduct(@PathVariable String id) {
-        ProductUserDTO product = productService.getById(id);
+        ProductUserDTO product = productService.getByIdUser(id);
+        return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<ProductAdminDTO> getAdminProduct(@PathVariable String id) {
+        ProductAdminDTO product = productService.getByIdAdmin(id);
         return product != null ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
     }
 

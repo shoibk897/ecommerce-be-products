@@ -16,7 +16,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class ProductServiceImplement implements ProductService {
+public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final Random random = new Random();
@@ -74,9 +74,15 @@ public class ProductServiceImplement implements ProductService {
     }
 
     @Override
-    public ProductUserDTO getById(String id){
+    public ProductUserDTO getByIdUser(String id){
         Product product = productRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return ProductMapper.toUserDTO(product);
+    }
+
+    @Override
+    public ProductAdminDTO getByIdAdmin(String id){
+        Product product = productRepository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return ProductMapper.toAdminDTO(product);
     }
 
     @Override

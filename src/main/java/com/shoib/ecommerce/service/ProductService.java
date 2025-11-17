@@ -8,7 +8,8 @@ public interface ProductService {
     List<ProductUserDTO> getAllProductsForUser();
     List<ProductAdminDTO> getAllProductsForAdmin();
 
-    ProductUserDTO getById(String id);
+    ProductUserDTO getByIdUser(String id);
+    ProductAdminDTO getByIdAdmin(String id);
 
     ProductAdminDTO create(ProductAdminDTO product);
 
