@@ -102,6 +102,7 @@ public class CartServiceImpl implements CartService {
                             break;
                         }
                     }
+                    Cart saved = cartRepository.save(cart);
                     return CartMapper.toCartDTO(saved);
                 }).orElse(null);
     }
