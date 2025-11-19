@@ -29,7 +29,7 @@ public class  CartController {
         return ResponseEntity.ok(cartService.removeFromCart(userId, productId));
     }
 
-    @DeleteMapping("/removeQty")
+    @PutMapping("/removeQty")
     public ResponseEntity<CartDTO> removeQtyFromCart(@RequestBody CartRequestDTO request) {
         return ResponseEntity.ok(cartService.removeQtyFromCart(request));
     }

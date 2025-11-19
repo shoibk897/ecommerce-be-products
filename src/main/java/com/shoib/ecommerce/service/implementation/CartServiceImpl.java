@@ -96,12 +96,19 @@ public class CartServiceImpl implements CartService {
     public CartDTO removeQtyFromCart(CartRequestDTO request) {
         return cartRepository.findByUserId(request.getUserId())
                 .map(cart -> {
-                    for(CartItem item : cart.getItems()) {
-                        if(item.getProductId().equals(request.getProductId())) {
-                            item.setQuantity(item.getQuantity() - request.getQuantity());
-                            break;
+                    CartItem cartItem = cart.getItems()
+                            .stream().filter(item -> item.getProductId().equals(request.getProductId()))
+                            .findFirst().orElse(null);
+
+                    if(cartItem != null) {
+                        int newQty = cartItem.getQuantity() - request.getQuantity();
+                        if(newQty > 0) {
+                            cartItem.setQuantity(newQty);
+                        }else{
+                            cart.getItems().remove(cartItem);
                         }
                     }
+
                     Cart saved = cartRepository.save(cart);
                     return CartMapper.toCartDTO(saved);
                 }).orElse(null);
