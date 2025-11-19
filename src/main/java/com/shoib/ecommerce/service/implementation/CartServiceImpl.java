@@ -1,22 +1,29 @@
 package com.shoib.ecommerce.service.implementation;
 
 import com.shoib.ecommerce.dto.CartDTO;
+import com.shoib.ecommerce.dto.CartProductDTO;
 import com.shoib.ecommerce.dto.CartRequestDTO;
+import com.shoib.ecommerce.dto.CartUserDTO;
+import com.shoib.ecommerce.entity.Product;
 import com.shoib.ecommerce.mapper.CartMapper;
 import com.shoib.ecommerce.entity.Cart;
 import com.shoib.ecommerce.entity.CartItem;
 import com.shoib.ecommerce.repository.CartRepository;
+import com.shoib.ecommerce.repository.ProductRepository;
 import com.shoib.ecommerce.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
+    private final ProductRepository productRepository;
+
     private final Random random = new Random();
     private String generateCartId() {
         String id;
@@ -28,18 +35,41 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartDTO getUserCart(String userId) {
-        return cartRepository.findByUserId(userId)
+    public List<CartDTO> getCarts() {
+        return cartRepository.findAll()
+                .stream()
                 .map(CartMapper::toCartDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CartUserDTO getUserCart(String userId) {
+        Cart cart = cartRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     Cart newCart = new Cart();
                     newCart.setId(generateCartId());
                     newCart.setUserId(userId);
                     newCart.setItems(new ArrayList<>());
-
-                    cartRepository.save(newCart);
-                    return CartMapper.toCartDTO(newCart);
+                    return cartRepository.save(newCart);
                 });
+
+        List<String> userProductsId = cart.getItems().stream().map(CartItem::getProductId).toList();
+        List<Product> userProductList = productRepository.findByIdIn(userProductsId);
+
+        Map<String, Product> idToList = new HashMap<>();
+        for (Product product : userProductList) {
+            idToList.put(product.getId(), product);
+        }
+
+        List<CartProductDTO> cartProductDTOs = cart.getItems()
+                .stream()
+                .map(item -> {Product product = idToList.get(item.getProductId());
+                    if (product == null) return null;
+                    return CartMapper.toCartProductDTO(product, item.getQuantity());
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        return CartMapper.toCartUserDTO(cart, cartProductDTOs);
     }
 
     @Override
@@ -97,8 +127,10 @@ public class CartServiceImpl implements CartService {
         return cartRepository.findByUserId(request.getUserId())
                 .map(cart -> {
                     CartItem cartItem = cart.getItems()
-                            .stream().filter(item -> item.getProductId().equals(request.getProductId()))
-                            .findFirst().orElse(null);
+                            .stream()
+                            .filter(item -> item.getProductId().equals(request.getProductId()))
+                            .findFirst()
+                            .orElse(null);
 
                     if(cartItem != null) {
                         int newQty = cartItem.getQuantity() - request.getQuantity();

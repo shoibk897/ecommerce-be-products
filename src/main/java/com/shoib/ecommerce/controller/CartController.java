@@ -2,10 +2,13 @@ package com.shoib.ecommerce.controller;
 
 import com.shoib.ecommerce.dto.CartDTO;
 import com.shoib.ecommerce.dto.CartRequestDTO;
+import com.shoib.ecommerce.dto.CartUserDTO;
 import com.shoib.ecommerce.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -14,8 +17,13 @@ public class  CartController {
 
     private final CartService cartService;
 
+    @GetMapping
+    public ResponseEntity<List<CartDTO>> getCart() {
+        return ResponseEntity.ok(cartService.getCarts());
+    }
+
     @GetMapping("/{userId}")
-    public ResponseEntity<CartDTO> getUserCart(@PathVariable String userId) {
+    public ResponseEntity<CartUserDTO> getUserCart(@PathVariable String userId) {
         return ResponseEntity.ok(cartService.getUserCart(userId));
     }
 

@@ -1,12 +1,13 @@
 package com.shoib.ecommerce.mapper;
 
-import com.shoib.ecommerce.dto.CartDTO;
-import com.shoib.ecommerce.dto.CartItemDTO;
-import com.shoib.ecommerce.dto.CartRequestDTO;
+import com.shoib.ecommerce.dto.*;
 import com.shoib.ecommerce.entity.Cart;
 import com.shoib.ecommerce.entity.CartItem;
+import com.shoib.ecommerce.entity.Product;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CartMapper {
@@ -34,5 +35,23 @@ public class CartMapper {
             );
         }
         return cartDTO;
+    }
+
+    public static CartUserDTO toCartUserDTO(Cart cart, List<CartProductDTO> items) {
+        CartUserDTO dto = new CartUserDTO();
+        dto.setCartId(cart.getId());
+        dto.setUserId(cart.getUserId());
+        dto.setItems(items);
+        return dto;
+    }
+
+    public static CartProductDTO toCartProductDTO(Product product, int qty) {
+        CartProductDTO dto = new CartProductDTO();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setDescription(product.getDescription());
+        dto.setPrice(product.getPrice());
+        dto.setQuantity(qty);
+        return dto;
     }
 }
