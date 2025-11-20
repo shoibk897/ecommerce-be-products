@@ -1,13 +1,10 @@
 package com.shoib.ecommerce.mapper;
 
 import com.shoib.ecommerce.dto.*;
-import com.shoib.ecommerce.entity.Cart;
-import com.shoib.ecommerce.entity.CartItem;
-import com.shoib.ecommerce.entity.Product;
+import com.shoib.ecommerce.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CartMapper {

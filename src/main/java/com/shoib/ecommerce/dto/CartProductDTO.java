@@ -1,7 +1,7 @@
 package com.shoib.ecommerce.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Data

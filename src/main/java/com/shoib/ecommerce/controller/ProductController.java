@@ -1,11 +1,10 @@
 package com.shoib.ecommerce.controller;
 
-import com.shoib.ecommerce.service.ProductService;
+import com.shoib.ecommerce.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.shoib.ecommerce.dto.ProductAdminDTO;
-import com.shoib.ecommerce.dto.ProductUserDTO;
+import com.shoib.ecommerce.service.ProductService;
 
 import java.util.List;
 

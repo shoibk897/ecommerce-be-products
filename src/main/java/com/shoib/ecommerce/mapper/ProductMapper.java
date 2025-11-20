@@ -1,7 +1,6 @@
 package com.shoib.ecommerce.mapper;
 
-import com.shoib.ecommerce.dto.ProductAdminDTO;
-import com.shoib.ecommerce.dto.ProductUserDTO;
+import com.shoib.ecommerce.dto.*;
 import com.shoib.ecommerce.entity.Product;
 
 public class ProductMapper {
