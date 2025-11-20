@@ -47,6 +47,7 @@ public class CartMapper {
         dto.setId(product.getId());
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
+        dto.setImageUrl(product.getImageURL());
         dto.setPrice(product.getPrice());
         dto.setQuantity(qty);
         return dto;
