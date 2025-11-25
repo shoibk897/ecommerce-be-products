@@ -59,6 +59,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ProductAdminDTO updateProductInventory(String id, int quantity){
+        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+        int updated = product.getStock() + quantity;
+        if (updated < 0) {
+            throw new RuntimeException("Inventory cannot be negative");
+        }
+        product.setStock(updated);
+        productRepository.save(product);
+        return ProductMapper.toAdminDTO(product);
+    }
+
+    @Override
     public ProductAdminDTO deleteProduct(String id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         productRepository.delete(product);

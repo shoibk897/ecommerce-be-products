@@ -17,6 +17,7 @@ public interface ProductService {
     List<ProductAdminDTO> searchProductsAdmin(String keyword);
 
     ProductAdminDTO updateProduct(String id, ProductAdminDTO updatedProduct);
+    ProductAdminDTO updateProductInventory(String id, int quantity);
 
     ProductAdminDTO deleteProduct(String id);
 }

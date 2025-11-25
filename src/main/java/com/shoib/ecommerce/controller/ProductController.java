@@ -57,6 +57,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.updateProduct(id, product));
     }
 
+    @PutMapping("/admin/update/inventory/{id}")
+    public ResponseEntity<ProductAdminDTO> updateProductInventory(@PathVariable String id, @RequestParam int quantity){
+        return ResponseEntity.ok(productService.updateProductInventory(id, quantity));
+    }
+
     @DeleteMapping("/admin/delete/{id}")
     public ResponseEntity<ProductAdminDTO> deleteProduct(@PathVariable String id) {
         return ResponseEntity.ok(productService.deleteProduct(id));
