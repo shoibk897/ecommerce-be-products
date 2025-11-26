@@ -8,6 +8,7 @@ import com.shoib.ecommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import com.shoib.ecommerce.dto.ProductUserDTO;
 import java.util.List;
@@ -59,15 +60,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductAdminDTO updateProductInventory(String id, int quantity){
-        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-        int updated = product.getStock() + quantity;
-        if (updated < 0) {
-            throw new RuntimeException("Inventory cannot be negative");
+    @Transactional
+    public ProductAdminDTO updateProductInventory(String id, int quantity) {
+        int retries = 3;
+        while (retries > 0) {
+            try {
+                Product product = productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found with id: " + id));
+                int updated = product.getStock() + quantity;
+                if (updated < 0) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Inventory cannot be negative");
+                }
+                product.setStock(updated);
+                Product saved = productRepository.save(product);
+                return ProductMapper.toAdminDTO(saved);
+            }
+            catch (org.springframework.dao.OptimisticLockingFailureException e) {
+                retries--;
+                if (retries == 0) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Inventory update failed due to simultaneous updates. Try again.");
+                }
+            }
         }
-        product.setStock(updated);
-        productRepository.save(product);
-        return ProductMapper.toAdminDTO(product);
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error");
     }
 
     @Override

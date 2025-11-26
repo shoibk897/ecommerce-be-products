@@ -16,6 +16,7 @@ public class ProductMapper {
         dto.setPrice(product.getPrice());
         dto.setType(product.getType());
         dto.setStock(product.getStock());
+        dto.setVersion(product.getVersion());
 
         return dto;
     }
@@ -44,6 +45,7 @@ public class ProductMapper {
         product.setPrice(dto.getPrice());
         product.setType(dto.getType());
         product.setStock(dto.getStock());
+        product.setVersion(dto.getVersion());
         return product;
     }
 }

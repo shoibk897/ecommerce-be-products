@@ -15,4 +15,5 @@ public class ProductAdminDTO {
     private int price;
     private String type;
     private int stock;
+    private Long version;
 }
