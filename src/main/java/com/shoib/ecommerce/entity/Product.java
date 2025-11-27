@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -20,7 +19,4 @@ public class Product {
     private int price;
     private String type;
     private int stock;
-
-    @Version
-    private Long version;
 }

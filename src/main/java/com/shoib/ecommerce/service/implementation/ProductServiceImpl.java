@@ -8,10 +8,10 @@ import com.shoib.ecommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import com.shoib.ecommerce.dto.ProductUserDTO;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.Random;
 
@@ -20,6 +20,7 @@ import java.util.Random;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final ReentrantLock inventoryLock = new ReentrantLock(true);
     private final Random random = new Random();
     private String generateProductId() {
         String id;
@@ -60,28 +61,23 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional
     public ProductAdminDTO updateProductInventory(String id, int quantity) {
-        int retries = 3;
-        while (retries > 0) {
-            try {
-                Product product = productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found with id: " + id));
-                int updated = product.getStock() + quantity;
-                if (updated < 0) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Inventory cannot be negative");
-                }
-                product.setStock(updated);
-                Product saved = productRepository.save(product);
-                return ProductMapper.toAdminDTO(saved);
+        inventoryLock.lock(); // 🔐 acquire lock
+        try {
+            Product product = productRepository.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+
+            int updated = product.getStock() + quantity;
+            if (updated < 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Inventory cannot be negative");
             }
-            catch (org.springframework.dao.OptimisticLockingFailureException e) {
-                retries--;
-                if (retries == 0) {
-                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Inventory update failed due to simultaneous updates. Try again.");
-                }
-            }
+            product.setStock(updated);
+            Product saved = productRepository.save(product);
+            return ProductMapper.toAdminDTO(saved);
         }
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error");
+        finally {
+            inventoryLock.unlock(); // 🔓 release lock
+        }
     }
 
     @Override
